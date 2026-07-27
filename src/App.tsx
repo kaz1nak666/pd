@@ -11,7 +11,6 @@ import {
   Mail,
   Play,
   RotateCcw,
-  ShieldCheck,
   Sparkles,
   Timer,
   Trophy,
@@ -21,6 +20,8 @@ import {
 } from 'lucide-react'
 import questionsRaw from './data/pddQuestions.json'
 import './App.css'
+
+const appBaseUrl = import.meta.env.BASE_URL || '/'
 
 type RawAnswer = { answer_text: string; is_correct: boolean }
 type RawQuestion = {
@@ -201,6 +202,11 @@ const hashPassword = async (password: string) => {
 
 const ticketNumberOf = (question: RawQuestion) => Number(question.ticket_number.replace(/\D/g, ''))
 const topicOf = (question: RawQuestion) => question.topic?.[0] ?? 'ПДД'
+
+const assetUrl = (path: string) => {
+  if (/^https?:\/\//.test(path)) return path
+  return `${appBaseUrl}${path.replace(/^\//, '')}`
+}
 
 const memoryFormula = (question: RawQuestion) => {
   const text = `${question.question} ${question.answer_tip}`.toLowerCase()
@@ -456,10 +462,6 @@ function App() {
   return (
     <main className="app">
       <aside className="side-panel">
-        <div className="brand">
-          <div className="brand-mark"><ShieldCheck size={23} /></div>
-          <div><b>ПДД</b><span>личный тренажер</span></div>
-        </div>
         <div className="level-card">
           <div className="level-top"><span>Уровень {level.level}</span><b>{stats.xp} XP</b></div>
           <div className="level-bar"><i style={{ width: `${(level.progress / level.next) * 100}%` }} /></div>
@@ -623,7 +625,7 @@ function QuestionCard({
         <span><Clock3 size={14} /> {formatClock(timerMs)}</span>
       </div>
       <div className="media">
-        {question.image ? <img src={question.image} alt="" loading="eager" /> : <div className="no-image"><BookOpenCheck size={38} /> вопрос без картинки</div>}
+        {question.image ? <img src={assetUrl(question.image)} alt="" loading="eager" /> : <div className="no-image"><BookOpenCheck size={38} /> вопрос без картинки</div>}
       </div>
       <div className="question-body">
         <h2>{question.question}</h2>
